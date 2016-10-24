@@ -55,6 +55,9 @@ echo "[`date`] ========= Installing Honeymap ========="
 echo "[`date`] ========= Installing MHN Server ========="
 ./install_mhnserver.sh
 
+echo "[`date`] ========= UFW Firewall Setup ========"
+./install_ufw.sh
+
 echo "[`date`] ========= MHN Server Install Finished ========="
 echo ""
 
