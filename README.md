@@ -66,6 +66,16 @@ be prompted for some configuration options.  See below for how this looks.
     Mail default sender [""]: 
     Path for log file ["mhn.log"]: 
 
+### Firewall setup
+Disable IPv6
+Allow ssh access
+Allow HTTP/S access
+Allow hpfeeds(10000) acccess
+Allow python listener(8181) access
+Allow MHN honeymap(3000) access
+Allow Kibana(5601) access
+
+
 
 ### Running
 
