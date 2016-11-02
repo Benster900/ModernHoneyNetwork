@@ -43,6 +43,9 @@ fi
 
 echo "[`date`] Starting Installation of all MHN packages"
 
+echo "[`date`] ========= Installing updates ========="
+apt-get update -y && apt-get upgrade -y
+
 echo "[`date`] ========= Installing hpfeeds ========="
 ./install_hpfeeds.sh
 
