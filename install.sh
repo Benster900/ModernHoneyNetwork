@@ -58,12 +58,6 @@ echo "[`date`] ========= Installing Honeymap ========="
 echo "[`date`] ========= Installing MHN Server ========="
 ./install_mhnserver.sh
 
-echo "[`date`] ========= Setup HTTPS ========"
-./setup_https.sh
-
-echo "[`date`] ========= UFW Firewall Setup ========"
-./install_ufw.sh
-
 echo "[`date`] ========= MHN Server Install Finished ========="
 echo ""
 
@@ -113,5 +107,11 @@ done
 
 chown $WWW_OWNER /var/log/mhn/mhn.log
 supervisorctl restart mhn-celery-worker
+
+echo "[`date`] ========= Setup HTTPS ========"
+./setup_https.sh
+
+echo "[`date`] ========= UFW Firewall Setup ========"
+./install_ufw.sh
 
 echo "[`date`] Completed Installation of all MHN packages"
