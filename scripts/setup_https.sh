@@ -27,7 +27,7 @@ if [[ $certType = L ]] ; then
 echo 'server {
       listen 80;
 
-      root /usr/share/nginx/html
+      root /usr/share/nginx/html;
 
       location ~ /.well-known {
               allow all;
@@ -104,7 +104,7 @@ EOF
 
 
   ########################## Setup kibana via https ##########################
-  sed -i 's/ort: 5601/ort: 5602/g' /opt/kibana/config/kibana.yml
+  sed -i 's/port: 5601/port: 5602/g' /opt/kibana/config/kibana.yml
   sed -i 's/host: "0.0.0.0"/host: "localhost"/g' /opt/kibana/config/kibana.yml
   supervisorctl restart kibana
 cat > /etc/nginx/sites-enabled/kibana-https << EOF
@@ -139,18 +139,13 @@ server {
 }
 EOF
 
-  # restart nginx
-  service kibana restart
-
+  # nginx restart
+  service nginx restart
 
   # add auto-renew to crontab
   service cron start
   echo '30 2 * * 1 /usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log
 35 2 * * 1 /etc/init.d/nginx reload' >> /etc/crontab
-
-  # nginx restart
-  service nginx restart
-
 
 else
   mkdir -p /etc/nginx/ssl
