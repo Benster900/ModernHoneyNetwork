@@ -33,34 +33,6 @@ mkdir -p /opt/kibana
 cp -R /tmp/kibana/kibana-4*/* /opt/kibana/
 rm -rf /tmp/kibana/kibana-4*
 
-
-sed -i 's/# server.host: "0.0.0.0"/server.host: "localhost"/g' /opt/kibana/config/kibana.yml
-
-domain=$(ls /etc/letsencrypt/live/)
-echo 'server {
-    listen 8080 ssl;
-
-    server_name _;
-    ssl_certificate     /etc/letsencrypt/live/'$domain'/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/'$domain'/privkey.pem;
-
-
-    #auth_basic "Restricted Access";
-    #auth_basic_user_file /etc/nginx/htpasswd.users;
-
-    location / {
-        proxy_pass http://localhost:5601;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-' | tee /etc/nginx/conf.d/kibana.conf
-service nginx restart
-
-
 cat > /etc/supervisor/conf.d/kibana.conf <<EOF
 [program:kibana]
 command=/opt/kibana/bin/kibana
