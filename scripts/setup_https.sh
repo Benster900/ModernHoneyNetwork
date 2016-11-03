@@ -5,7 +5,9 @@ set -e
 
 read -p "Add HTTPS to MHN core services[y/n]: " answer
 
-if [[ $answer = y ]] ; then
+if [[ $answer = n ]] ; then
+   exit 1
+fi
 
 read -p "Select a cert type: \n
 Let's Encrypt cert(L) \n
@@ -139,21 +141,25 @@ EOF
 
   # restart nginx
   service kibana restart
-  service nginx restart
+
 
   # add auto-renew to crontab
   service cron start
   echo '30 2 * * 1 /usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log
 35 2 * * 1 /etc/init.d/nginx reload' >> /etc/crontab
 
+  # nginx restart
+  service nginx restart
 
-elif
+
+else
   mkdir -p /etc/nginx/ssl
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt
   openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
   ########################## setup mhn via http ##########################
-  cat > /etc/nginx/sites-available/mhn-http << server {
+  cat > /etc/nginx/sites-available/mhn-http << EOF
+server{
       listen       80;
       server_name  $domain www.$domain
 
@@ -172,10 +178,11 @@ elif
         alias /opt/mhn/server/mhn/static;
       }
   }
-  EOF
+EOF
 
   ########################## setup mhn via https ##########################
-  cat > /etc/nginx/sites-available/mhn-https << server {
+  cat > /etc/nginx/sites-available/mhn-https << EOF
+server {
       listen              443 ssl;
       server_name         $domain www.$domain;
       ssl_certificate /etc/nginx/ssl/nginx.crt;
@@ -210,12 +217,12 @@ elif
         alias /opt/mhn/server/mhn/static;
       }
   }
-  EOF
+EOF
 
 
   ########################## setup mhn via https ##########################
   cat > /etc/nginx/sites-enabled/mhn-https << EOF
-  server {
+server {
     listen              443 ssl;
     server_name         $domain www.$domain;
     ssl_certificate /etc/nginx/ssl/nginx.crt;
@@ -250,7 +257,7 @@ elif
       alias /opt/mhn/server/mhn/static;
     }
   }
-  EOF
+EOF
 
 
 
@@ -259,7 +266,7 @@ elif
   sed -i 's/host: "0.0.0.0"/host: "localhost"/g' /opt/kibana/config/kibana.yml
   supervisorctl restart kibana
   cat > /etc/nginx/sites-enabled/kibana-https << EOF
-  server {
+server {
     listen 5601 ssl;
 
     server_name         $domain www.$domain;
@@ -288,6 +295,7 @@ elif
         proxy_cache_bypass \$http_upgrade;
     }
   }
-  EOF
-fi
+EOF
+    # restart nginx
+    service nginx restart
 fi
