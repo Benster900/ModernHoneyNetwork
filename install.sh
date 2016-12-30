@@ -114,4 +114,12 @@ echo "[`date`] ========= Setup HTTPS ========"
 echo "[`date`] ========= UFW Firewall Setup ========"
 ./install_ufw.sh
 
+echo "[`date`] ========= Disable MHN Server Collector ========"
+echo "The MHN server reports anonymized attack data back to Anomali, Inc. (formerly known as ThreatStream). If you are interested in this data please contact: modern-honey-network@googlegroups.com. This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: /opt/mhn/scripts/disable_collector.sh"
+echo -n "To disable enter 'y' and to leave collector enabled enter 'n' (y/n)"
+read answer
+if [ "$answer" == "y" -o "$answer" == "Y" ]
+  /opt/mhn/scripts/disable_collector.sh
+fi
+
 echo "[`date`] Completed Installation of all MHN packages"
